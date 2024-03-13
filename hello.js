@@ -2,4 +2,4 @@ function hello(name){
     console.log(name+"님 안녕하세요");
 }
 
-hello("강창선");
+hello("감자");
