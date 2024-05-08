@@ -17,14 +17,5 @@ router
 .route("/:id")
 .get(getContact).put(updateContact).delete(deleteContact);
 
-// .get((req,res)=>{
-//     
-// })
-// .put((req,res)=>{
-//     
-// })
-// .delete((req,res)=>{
-//     
-// });
 
 module.exports = router;
