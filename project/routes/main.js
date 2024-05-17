@@ -24,9 +24,9 @@ router.get(
 );
 
 
-router.get("/about", (res, req) => {
+router.get("/about", (req, res) => {
     res.render("about", { layout: mainLayout });
-}); 
+});
 
 module.exports = router;
 
