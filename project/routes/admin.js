@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const adminLayout = "../views/layouts/admin";
 const adminLayout2 = "../views/layouts/admin-nologout";
+const adminLayout3 = "../views/layouts/admin-adduser";
 const asynchandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
@@ -34,6 +35,30 @@ router.get(
 
     res.render("admin/index", { locals, layout: adminLayout2 })
 });
+
+
+router.get("/register", asynchandler(async (req, res) => {
+    res.render("admin/register", { layout: adminLayout3 });
+}));
+
+router.post("/register", asynchandler(async (req, res) => {
+    const { username, password } = req.body;
+
+    // 사용자 이름 중복 체크
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+        return res.status(400).json({ message: "이미 존재하는 사용자 이름입니다." });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({
+        username,
+        password: hashedPassword,
+    });
+
+    // 로그인 페이지로 리다이렉트
+    res.redirect("/admin");
+}));
 
 
 router.post(
@@ -73,6 +98,18 @@ router.get(
     "/register", asynchandler(async (req, res) => {
         res.render("admin/index", { layout: adminLayout2 });
     })
+);
+
+router.post(
+    "/register",
+    asynchandler(async (req,res)=>{
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        const user = await User.create({
+            username : req.body.username,
+            password : hashedPassword,
+        });
+        res.json(`user created : ${user}`);
+        })
 );
 
 
@@ -153,5 +190,7 @@ router.delete("/delete/:id", checkLogin, asynchandler(async (req, res) => {
     await Post.deleteOne({ _id: req.params.id });
     res.redirect("/allPosts");
 }));
+
+
 
 module.exports = router;
